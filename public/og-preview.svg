@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630">
+  <rect width="1200" height="630" fill="#f7f7f5"/>
+  <rect x="60" y="60" width="1080" height="510" rx="24" fill="#ffffff" stroke="#e2e2e0" stroke-width="2"/>
+  <rect x="120" y="120" width="120" height="120" rx="16" fill="#6965db"/>
+  <path d="M140 200 L180 140 L220 200" stroke="#fff" stroke-width="10" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+  <line x1="150" y1="200" x2="210" y2="200" stroke="#fff" stroke-width="10" stroke-linecap="round"/>
+  <text x="270" y="205" font-family="system-ui, -apple-system, sans-serif" font-size="72" font-weight="700" fill="#1a1a1a">Whiteboard</text>
+  <text x="122" y="300" font-family="system-ui, -apple-system, sans-serif" font-size="36" fill="#6b6b6b">Sketch ideas, draw diagrams, explain concepts.</text>
+  <text x="122" y="360" font-family="system-ui, -apple-system, sans-serif" font-size="36" fill="#6b6b6b">No account required. Saved locally.</text>
+  <rect x="120" y="420" width="220" height="72" rx="36" fill="none" stroke="#1a1a1a" stroke-width="3"/>
+  <circle cx="160" cy="456" r="10" fill="none" stroke="#1a1a1a" stroke-width="3"/>
+  <rect x="185" y="446" width="90" height="20" rx="10" fill="#1a1a1a"/>
+</svg>

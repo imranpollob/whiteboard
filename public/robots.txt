@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://imranpollob.github.io/whiteboard/sitemap.xml
