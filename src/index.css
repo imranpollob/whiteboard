@@ -2,26 +2,66 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Personal brand theme (teal signature + Outfit/Plus Jakarta Sans).
+ * Token values snapshotted from personal-brand-theme/brand.css so the app
+ * stays fully self-sufficient offline; only the tools launcher and the
+ * webfonts below load from the network as progressive enhancement. */
 :root {
-  --wb-bg: #ffffff;
-  --wb-fg: #1a1a1a;
-  --wb-header-bg: #f7f7f5;
-  --wb-border: #e2e2e0;
+  --wb-bg: #ecfdfb;
+  --wb-fg: #0f172a;
+  --wb-header-bg: #f8fafc;
+  --wb-border: #cbd5e1;
   --wb-btn-bg: #ffffff;
-  --wb-btn-hover: #efefec;
-  --wb-danger: #c0392b;
-  --wb-muted: #6b6b6b;
+  --wb-btn-hover: #f0fdfa;
+  --wb-danger: #dc2626;
+  --wb-muted: #64748b;
+  --wb-primary: #0d9488;
+  --wb-primary-hover: #0f766e;
+  --wb-success: #16a34a;
+  --wb-radius: 8px;
+  --wb-font-body: "Plus Jakarta Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --wb-font-heading: "Outfit", system-ui, -apple-system, "Segoe UI", sans-serif;
 }
 
 :root[data-theme="dark"] {
-  --wb-bg: #1e1e1e;
-  --wb-fg: #f0f0f0;
-  --wb-header-bg: #252525;
-  --wb-border: #3a3a3a;
-  --wb-btn-bg: #2d2d2d;
-  --wb-btn-hover: #383838;
-  --wb-danger: #e06c5b;
-  --wb-muted: #a8a8a8;
+  --wb-bg: #071311;
+  --wb-fg: #f0fdfa;
+  --wb-header-bg: #0d1f1c;
+  --wb-border: #1f3a35;
+  --wb-btn-bg: #0d1f1c;
+  --wb-btn-hover: #12302b;
+  --wb-danger: #f87171;
+  --wb-muted: #94a3b8;
+  --wb-primary: #14b8a6;
+  --wb-primary-hover: #2dd4bf;
+  --wb-success: #4ade80;
+}
+
+/* Token names expected by the hotlinked tools-launcher stylesheet
+ * (launcher.css reads these, not the --wb-* aliases above). Without them
+ * the launcher panel paints transparent. Same brand snapshot source. */
+:root {
+  --brand-950: #042f2e;
+  --color-primary: #0d9488;
+  --color-primary-hover: #0f766e;
+  --color-surface: #f8fafc;
+  --color-text: #0f172a;
+  --color-text-muted: #64748b;
+  --color-border: #cbd5e1;
+  --font-family: "Plus Jakarta Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-heading: "Outfit", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-size-xs: 0.75rem;
+  --font-weight-bold: 700;
+  --radius: 8px;
+}
+
+:root[data-theme="dark"] {
+  --color-primary: #14b8a6;
+  --color-primary-hover: #2dd4bf;
+  --color-surface: #0d1f1c;
+  --color-text: #f0fdfa;
+  --color-text-muted: #94a3b8;
+  --color-border: #1f3a35;
 }
 
 * {
@@ -36,7 +76,7 @@ body,
 }
 
 body {
-  font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+  font-family: var(--wb-font-body);
   background: var(--wb-bg);
   color: var(--wb-fg);
 }
@@ -99,9 +139,27 @@ body {
 }
 
 .app-title {
+  font-family: var(--wb-font-heading);
   font-size: 1rem;
+  font-weight: 600;
+  letter-spacing: -0.01em;
   margin: 0;
   white-space: nowrap;
+}
+
+.app-logo {
+  width: 30px;
+  height: 30px;
+  border-radius: var(--wb-radius);
+  border: 1px solid var(--wb-border);
+  flex-shrink: 0;
+}
+
+.app-brand {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  min-width: 0;
 }
 
 .header-btn {
@@ -111,14 +169,23 @@ body {
   background: var(--wb-btn-bg);
   color: var(--wb-fg);
   border: 1px solid var(--wb-border);
-  border-radius: 6px;
+  border-radius: var(--wb-radius);
   padding: 0.3rem 0.6rem;
   cursor: pointer;
   white-space: nowrap;
+  /* Brand nav size: Plus Jakarta Sans renders wide at body size. */
+  font-size: 0.875rem;
+  font-weight: 500;
 }
 
 .header-btn:hover:not(:disabled) {
   background: var(--wb-btn-hover);
+  border-color: var(--wb-primary);
+}
+
+:focus-visible {
+  outline: 2px solid var(--wb-primary);
+  outline-offset: 1px;
 }
 
 .header-btn:disabled {
@@ -143,7 +210,8 @@ body {
 }
 
 .save-dot[data-state="saved"] {
-  background: currentcolor;
+  background: var(--wb-success);
+  border-color: var(--wb-success);
 }
 
 .save-dot[data-state="error"] {
@@ -209,10 +277,16 @@ body {
   background: var(--wb-btn-bg);
   color: var(--wb-fg);
   border: 1px solid var(--wb-border);
-  border-radius: 6px;
+  border-radius: var(--wb-radius);
   padding: 0.3rem 0.6rem;
   cursor: pointer;
   max-width: 16rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
+.board-switcher-toggle:hover {
+  border-color: var(--wb-primary);
 }
 
 .board-switcher-name {
@@ -248,7 +322,7 @@ body {
 }
 
 .board-switcher-item.is-active {
-  outline: 1px solid var(--wb-border);
+  outline: 1px solid var(--wb-primary);
 }
 
 .board-switcher-select {
@@ -321,6 +395,7 @@ body {
 
 .board-switcher-new:hover {
   background: var(--wb-btn-hover);
+  border-color: var(--wb-primary);
 }
 
 /* ---- Presentation mode ---- */
@@ -395,4 +470,33 @@ body.present-controls-idle .present-controls {
   .board-switcher-toggle {
     max-width: 10rem;
   }
+}
+
+/* ---- Brand tools launcher (hamburger) ----
+ * The launcher ships its own stylesheet; these overrides size it like
+ * the whiteboard header buttons. Brand tokens resolve because the
+ * launcher stylesheet pairs with the same values above. */
+
+.app-header .bl-toggle {
+  width: 32px;
+  height: 32px;
+  border: 1px solid var(--wb-border);
+  border-radius: var(--wb-radius);
+  background: var(--wb-btn-bg);
+  color: var(--wb-fg);
+}
+
+.app-header .bl-toggle:hover,
+.app-header .bl-toggle[aria-expanded="true"] {
+  color: var(--wb-primary-hover);
+  border-color: var(--wb-primary);
+}
+
+.app-header .bl-toggle[aria-expanded="true"] {
+  background: var(--wb-btn-hover);
+}
+
+.app-header .bl-toggle svg {
+  width: 16px;
+  height: 16px;
 }

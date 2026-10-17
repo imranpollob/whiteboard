@@ -17,6 +17,10 @@ Live app: https://imranpollob.github.io/whiteboard/
 
 React + TypeScript, Vite, Excalidraw, Tailwind CSS, Lucide React, IndexedDB (lightweight wrapper, no ORM), Vitest. Deployed as a static SPA to GitHub Pages via GitHub Actions.
 
+## Brand theme
+
+The app chrome follows the [personal brand theme](https://imranpollob.github.io/personal-brand-theme/): teal signature (`#0d9488` light / `#14b8a6` dark), Outfit headings with Plus Jakarta Sans body, and the iP logo mark in the header. Token values are snapshotted into `src/index.css` (see the comment there) so the app works fully offline; only the webfonts and the tools launcher load from the network as progressive enhancement. The waffle button at the top-right opens the shared all-tools launcher (`launcher.js` hotlinked from the brand site so its tool list stays fresh; it fails silently offline and the header is unchanged).
+
 ## Run locally
 
 Requires Node.js 20+ and npm.

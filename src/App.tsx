@@ -12,6 +12,25 @@ import type { Board, BoardElement } from "./types/board";
 
 const THEME_KEY = "whiteboard.theme";
 
+/** Brand tools launcher (hamburger). Hotlinked so the tool list stays fresh. */
+const LAUNCHER_SRC = "https://imranpollob.github.io/personal-brand-theme/launcher.js";
+
+/** Load the launcher script once, after React has committed the header slot. */
+function useBrandLauncher() {
+  useEffect(() => {
+    // NOTE: the marker attribute must not be `data-brand-launcher` — the
+    // launcher claims the first element with that exact attribute as its
+    // mount slot, which would swallow this script tag in <head>.
+    if (document.querySelector('script[data-brand-launcher-script]')) return;
+    const s = document.createElement("script");
+    s.src = LAUNCHER_SRC;
+    s.defer = true;
+    s.dataset.brandLauncherScript = "true";
+    s.onerror = () => s.remove();
+    document.head.appendChild(s);
+  }, []);
+}
+
 function loadTheme(): WhiteboardTheme {
   try {
     return localStorage.getItem(THEME_KEY) === "dark" ? "dark" : "light";
@@ -57,6 +76,7 @@ export default function App() {
   const apiRef = useRef<ExcalidrawImperativeAPI | null>(null);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   const { isPresenting, isFullscreen, enter, exit } = usePresentationMode();
+  useBrandLauncher();
 
   const activeId = activeBoard?.id ?? null;
 

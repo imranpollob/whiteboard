@@ -41,10 +41,14 @@ export default function AppHeader({
   onPresent,
   onToggleTheme,
 }: AppHeaderProps) {
+  const logoUrl = `${import.meta.env.BASE_URL}logo.png`;
   return (
     <header className="app-header">
       <div className="app-header-left">
-        <h1 className="app-title">{title}</h1>
+        <span className="app-brand">
+          <img className="app-logo" src={logoUrl} alt="" aria-hidden="true" />
+          <h1 className="app-title">{title}</h1>
+        </span>
         {switcher}
       </div>
 
@@ -116,6 +120,11 @@ export default function AppHeader({
             <Sun size={15} aria-hidden="true" />
           )}
         </button>
+
+        {/* Brand tools launcher (hamburger): the launcher script replaces
+            this slot with the waffle button after it loads. When offline
+            the slot stays empty and the header is unchanged. */}
+        <span data-brand-launcher />
       </div>
     </header>
   );
