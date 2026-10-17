@@ -3,8 +3,8 @@ import type { ExcalidrawImperativeAPI } from "@excalidraw/excalidraw/types";
 import WhiteboardEditor, { type WhiteboardScene, type WhiteboardTheme } from "./components/WhiteboardEditor";
 import AppHeader, { type SaveStatus } from "./components/AppHeader";
 import BoardSwitcher from "./components/BoardSwitcher";
-import PresentationControls from "./components/PresentationControls";
-import { usePresentationMode } from "./hooks/usePresentationMode";
+import FullscreenControls from "./components/FullscreenControls";
+import { useFullscreen } from "./hooks/useFullscreen";
 import { useBoards } from "./hooks/useBoards";
 import { useAutosave, type SaveStatus as StoreSaveStatus } from "./hooks/useAutosave";
 import { downloadBlob, parseSceneFileText, slugify } from "./lib/export";
@@ -75,7 +75,7 @@ export default function App() {
   const [importError, setImportError] = useState<string | null>(null);
   const apiRef = useRef<ExcalidrawImperativeAPI | null>(null);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
-  const { isPresenting, isFullscreen, enter, exit } = usePresentationMode();
+  const { isFullscreen, exit, toggle: toggleFullscreen } = useFullscreen();
   useBrandLauncher();
 
   const activeId = activeBoard?.id ?? null;
@@ -221,15 +221,6 @@ export default function App() {
     fileInputRef.current?.click();
   }, []);
 
-  const toggleFullscreen = useCallback(async () => {
-    try {
-      if (document.fullscreenElement) await document.exitFullscreen();
-      else await document.documentElement.requestFullscreen();
-    } catch {
-      /* CSS fallback already active — nothing more to do */
-    }
-  }, []);
-
   const switcherBoards = useMemo(
     () => boards.map((b) => ({ id: b.id, title: b.title, updatedAt: b.updatedAt })),
     [boards],
@@ -260,32 +251,30 @@ export default function App() {
   );
 
   return (
-    <div className={`app${isPresenting ? " is-presenting" : ""}`}>
-      {!isPresenting && (
-        <AppHeader
-          title="Whiteboard"
-          switcher={
-            <BoardSwitcher
-              boards={switcherBoards}
-              activeId={activeId}
-              onSelect={switchBoard}
-              onCreate={handleCreate}
-              onRename={handleRename}
-              onDelete={handleDelete}
-            />
-          }
-          saveStatus={saveStatus}
-          theme={theme}
-          isPresenting={isPresenting}
-          fileDisabled={!activeBoard}
-          onExportPng={() => void handleExportPng()}
-          onExportSvg={() => void handleExportSvg()}
-          onExportJson={() => void handleExportJson()}
-          onImport={onImportClick}
-          onPresent={() => void enter()}
-          onToggleTheme={() => setTheme((t) => (t === "light" ? "dark" : "light"))}
-        />
-      )}
+    <div className="app">
+      <AppHeader
+        title="Whiteboard"
+        switcher={
+          <BoardSwitcher
+            boards={switcherBoards}
+            activeId={activeId}
+            onSelect={switchBoard}
+            onCreate={handleCreate}
+            onRename={handleRename}
+            onDelete={handleDelete}
+          />
+        }
+        saveStatus={saveStatus}
+        theme={theme}
+        isFullscreen={isFullscreen}
+        fileDisabled={!activeBoard}
+        onExportPng={() => void handleExportPng()}
+        onExportSvg={() => void handleExportSvg()}
+        onExportJson={() => void handleExportJson()}
+        onImport={onImportClick}
+        onToggleFullscreen={toggleFullscreen}
+        onToggleTheme={() => setTheme((t) => (t === "light" ? "dark" : "light"))}
+      />
       <main className="app-main">
         {loading ? (
           <p className="app-empty">Loading boards…</p>
@@ -321,12 +310,7 @@ export default function App() {
           if (file) void handleImportFile(file);
         }}
       />
-      <PresentationControls
-        visible={isPresenting}
-        isFullscreen={isFullscreen}
-        onExit={() => void exit()}
-        onToggleFullscreen={() => void toggleFullscreen()}
-      />
+      <FullscreenControls visible={isFullscreen} onExit={() => void exit()} />
     </div>
   );
 }

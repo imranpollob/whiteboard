@@ -1,5 +1,5 @@
 import type { ReactNode } from "react";
-import { FileDown, MonitorUp, Moon, Sun } from "lucide-react";
+import { FileDown, Maximize, Minimize, Moon, Sun } from "lucide-react";
 import type { WhiteboardTheme } from "./WhiteboardEditor";
 
 export type SaveStatus = "saved" | "saving" | "error" | "unsaved";
@@ -10,13 +10,13 @@ interface AppHeaderProps {
   switcher: ReactNode;
   saveStatus: SaveStatus;
   theme: WhiteboardTheme;
-  isPresenting: boolean;
+  isFullscreen: boolean;
   fileDisabled?: boolean;
   onExportPng: () => void;
   onExportSvg: () => void;
   onExportJson: () => void;
   onImport: () => void;
-  onPresent: () => void;
+  onToggleFullscreen: () => void;
   onToggleTheme: () => void;
 }
 
@@ -32,13 +32,13 @@ export default function AppHeader({
   switcher,
   saveStatus,
   theme,
-  isPresenting,
+  isFullscreen,
   fileDisabled,
   onExportPng,
   onExportSvg,
   onExportJson,
   onImport,
-  onPresent,
+  onToggleFullscreen,
   onToggleTheme,
 }: AppHeaderProps) {
   const logoUrl = `${import.meta.env.BASE_URL}logo.png`;
@@ -88,10 +88,10 @@ export default function AppHeader({
               Export SVG image
             </button>
             <button type="button" role="menuitem" disabled={fileDisabled} onClick={onExportJson}>
-              Export Excalidraw file
+              Export JSON
             </button>
             <button type="button" role="menuitem" disabled={fileDisabled} onClick={onImport}>
-              Import Excalidraw file…
+              Import JSON
             </button>
           </div>
         </div>
@@ -99,11 +99,16 @@ export default function AppHeader({
         <button
           type="button"
           className="header-btn"
-          onClick={onPresent}
-          title="Enter presentation mode (hides chrome)"
+          onClick={onToggleFullscreen}
+          title={isFullscreen ? "Exit fullscreen (Esc)" : "Enter fullscreen"}
+          aria-pressed={isFullscreen}
         >
-          <MonitorUp size={15} aria-hidden="true" />
-          {isPresenting ? "Presenting…" : "Present"}
+          {isFullscreen ? (
+            <Minimize size={15} aria-hidden="true" />
+          ) : (
+            <Maximize size={15} aria-hidden="true" />
+          )}
+          {isFullscreen ? "Exit fullscreen" : "Fullscreen"}
         </button>
 
         <button

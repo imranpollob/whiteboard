@@ -258,6 +258,8 @@ body {
   padding: 0.4rem 0.6rem;
   border-radius: 5px;
   cursor: pointer;
+  font-size: 0.875rem;
+  font-weight: 500;
 }
 
 .export-menu-list button:hover:not(:disabled) {
@@ -337,6 +339,8 @@ body {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+  font-size: 0.875rem;
+  font-weight: 500;
 }
 
 .board-switcher-select:hover {
@@ -364,7 +368,9 @@ body {
 .board-switcher-rename {
   flex: 1;
   min-width: 0;
-  font: inherit;
+  font-size: 0.875rem;
+  font-weight: 500;
+  font-family: inherit;
   color: var(--wb-fg);
   background: var(--wb-bg);
   border: 1px solid var(--wb-border);
@@ -391,6 +397,8 @@ body {
   border-radius: 6px;
   padding: 0.4rem;
   cursor: pointer;
+  font-size: 0.875rem;
+  font-weight: 500;
 }
 
 .board-switcher-new:hover {
@@ -398,18 +406,9 @@ body {
   border-color: var(--wb-primary);
 }
 
-/* ---- Presentation mode ---- */
+/* ---- Fullscreen mode: single floating exit ---- */
 
-body.presenting .app-header {
-  display: none;
-}
-
-body.presenting .app-main {
-  position: fixed;
-  inset: 0;
-}
-
-.present-controls {
+.fullscreen-controls {
   position: fixed;
   bottom: 1rem;
   left: 50%;
@@ -424,12 +423,12 @@ body.presenting .app-main {
   transition: opacity 0.4s;
 }
 
-body.present-controls-idle .present-controls {
+body.fullscreen-controls-idle .fullscreen-controls {
   opacity: 0;
   pointer-events: none;
 }
 
-.present-controls-btn {
+.fullscreen-controls-btn {
   display: inline-flex;
   align-items: center;
   gap: 0.35rem;
@@ -442,7 +441,7 @@ body.present-controls-idle .present-controls {
   font-size: 0.85rem;
 }
 
-.present-controls-btn:hover {
+.fullscreen-controls-btn:hover {
   background: rgb(255 255 255 / 0.15);
 }
 

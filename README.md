@@ -10,7 +10,7 @@ Live app: https://imranpollob.github.io/whiteboard/
 - **Multiple boards** — create, rename, switch, and delete (with confirmation) from the compact board switcher. Opens the most recently used board; creates a default board on first run.
 - **Local autosave** — debounced IndexedDB persistence of elements, embedded files, and canvas background. Survives refresh and browser restarts. No account, no backend.
 - **Import / export** — export PNG, SVG, or an editable `.excalidraw.json` file (images included); import `.excalidraw` / `.excalidraw.json` files back onto the current board.
-- **Presentation mode** — hides the header, maximizes canvas space, supports browser fullscreen with a fallback, exits via the on-screen button or `Escape`.
+- **Fullscreen** — standard browser fullscreen from the header button, with a single floating exit control; `Esc` exits natively.
 - **Light / dark mode**, responsive layout (desktop-first, usable on tablets and phones), Lucide icons, minimal neutral styling.
 
 ## Tech stack
