@@ -1,0 +1,14 @@
+{
+  "name": "Whiteboard",
+  "short_name": "Whiteboard",
+  "description": "A simple, free online whiteboard for sketching ideas and drawing diagrams.",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#0e8a94",
+  "icons": [
+    { "src": "icon-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "icon-512.png", "sizes": "512x512", "type": "image/png" }
+  ]
+}
