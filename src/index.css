@@ -499,3 +499,9 @@ body.fullscreen-controls-idle .fullscreen-controls {
   width: 16px;
   height: 16px;
 }
+
+/* Hide Excalidraw's shape library (sidebar trigger + sidebar). */
+.wb-editor .default-sidebar-trigger,
+.wb-editor .layer-ui__library {
+  display: none !important;
+}

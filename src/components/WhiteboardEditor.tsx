@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useRef } from "react";
-import { Excalidraw } from "@excalidraw/excalidraw";
+import { Excalidraw, MainMenu } from "@excalidraw/excalidraw";
+import { Github } from "lucide-react";
 import type {
   BinaryFileData,
   BinaryFiles,
@@ -119,7 +120,27 @@ export default function WhiteboardEditor({
         initialData={mountSceneRef.current ?? undefined}
         theme={theme}
         onChange={handleChange}
-      />
+      >
+        {/* Default menu minus the Excalidraw social links. */}
+        <MainMenu>
+          <MainMenu.DefaultItems.LoadScene />
+          <MainMenu.DefaultItems.SaveToActiveFile />
+          <MainMenu.DefaultItems.Export />
+          <MainMenu.DefaultItems.SaveAsImage />
+          <MainMenu.DefaultItems.SearchMenu />
+          <MainMenu.DefaultItems.Help />
+          <MainMenu.DefaultItems.ClearCanvas />
+          <MainMenu.ItemLink
+            href="https://github.com/imranpollob/whiteboard"
+            icon={<Github size={16} />}
+          >
+            GitHub
+          </MainMenu.ItemLink>
+          <MainMenu.Separator />
+          <MainMenu.DefaultItems.ToggleTheme />
+          <MainMenu.DefaultItems.ChangeCanvasBackground />
+        </MainMenu>
+      </Excalidraw>
     </div>
   );
 }

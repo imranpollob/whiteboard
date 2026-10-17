@@ -1,82 +1,82 @@
+<div align="center">
+
+<img src="public/logo.png" alt="Whiteboard logo" width="96" />
+
 # Whiteboard
 
-A simple, free online whiteboard for sketching ideas, drawing diagrams, and explaining concepts. No account required. Drawings are saved locally in the browser.
+**A free, no-signup online whiteboard for sketching ideas and drawing diagrams.**
 
-Live app: https://imranpollob.github.io/whiteboard/
+[Open the app](https://imranpollob.github.io/whiteboard/)
 
-## Features (MVP)
+</div>
 
-- **Drawing canvas** — Excalidraw-powered editor: freehand, shapes, arrows, lines, text, images, colors, undo/redo, zoom/pan, keyboard shortcuts.
-- **Multiple boards** — create, rename, switch, and delete (with confirmation) from the compact board switcher. Opens the most recently used board; creates a default board on first run.
-- **Local autosave** — debounced IndexedDB persistence of elements, embedded files, and canvas background. Survives refresh and browser restarts. No account, no backend.
-- **Import / export** — export PNG, SVG, or an editable `.excalidraw.json` file (images included); import `.excalidraw` / `.excalidraw.json` files back onto the current board.
-- **Fullscreen** — standard browser fullscreen from the header button, with a single floating exit control; `Esc` exits natively.
-- **Light / dark mode**, responsive layout (desktop-first, usable on tablets and phones), Lucide icons, minimal neutral styling.
+---
+
+Whiteboard is a fast, distraction-free canvas for thinking out loud. Open it, start drawing, and come back later to find your work exactly where you left it. There are no accounts and no servers: everything stays in your browser.
+
+## Features
+
+- **Full drawing toolkit.** Built on [Excalidraw](https://excalidraw.com/), with freehand drawing, shapes, arrows, lines, text, images, colors, undo/redo, zoom and pan, and keyboard shortcuts.
+- **Multiple boards.** Create, rename, switch between, and delete boards from a compact switcher. The app reopens your most recent board and sets up a fresh one on first launch.
+- **Automatic saving.** Changes are saved locally to IndexedDB as you work, including embedded images and the canvas background, so they survive refreshes and browser restarts.
+- **Import and export.** Export to PNG, SVG, or an editable `.excalidraw.json` file, and import `.excalidraw` files back onto the current board.
+- **Fullscreen mode.** Present or focus with one click. A single floating control brings you back, and `Esc` works as expected.
+- **Light and dark themes** with a responsive layout that works on desktops, tablets, and phones.
 
 ## Tech stack
 
-React + TypeScript, Vite, Excalidraw, Tailwind CSS, Lucide React, IndexedDB (lightweight wrapper, no ORM), Vitest. Deployed as a static SPA to GitHub Pages via GitHub Actions.
+React, TypeScript, Vite, Excalidraw, Tailwind CSS, Lucide icons, and Vitest. Persistence uses a small IndexedDB wrapper with no external database or backend. The app ships as a static site on GitHub Pages.
 
-## Brand theme
+## Getting started
 
-The app chrome follows the [personal brand theme](https://imranpollob.github.io/personal-brand-theme/): teal signature (`#0d9488` light / `#14b8a6` dark), Outfit headings with Plus Jakarta Sans body, and the iP logo mark in the header. Token values are snapshotted into `src/index.css` (see the comment there) so the app works fully offline; only the webfonts and the tools launcher load from the network as progressive enhancement. The waffle button at the top-right opens the shared all-tools launcher (`launcher.js` hotlinked from the brand site so its tool list stays fresh; it fails silently offline and the header is unchanged).
-
-## Run locally
-
-Requires Node.js 20+ and npm.
+You'll need Node.js 20 or newer.
 
 ```bash
+git clone https://github.com/imranpollob/whiteboard.git
+cd whiteboard
 npm install
-npm run dev      # start dev server
-npm test         # run tests (vitest)
-npm run lint     # eslint, zero warnings
-npm run build    # typecheck (tsc -b) + production build to dist/
+npm run dev
 ```
 
-## Deploy to GitHub Pages
-
-1. Push the repo to GitHub as `whiteboard` under user `imranpollob` (or update `base` in `vite.config.ts` and the URLs in `index.html`, `public/robots.txt`, `public/sitemap.xml` to match).
-2. In the repository go to **Settings → Pages → Build and deployment → Source** and select **GitHub Actions**.
-3. Push to `main` (or run the workflow manually). The [deploy workflow](.github/workflows/deploy.yml) installs, tests, builds, and publishes `dist/`.
-4. The app is served at `https://imranpollob.github.io/whiteboard/`. `vite.config.ts` sets `base: "/whiteboard/"` so all assets resolve under the subpath; client-side routing is intentionally absent (single view), so no SPA fallback hacks are needed.
+| Command           | What it does                                      |
+| ----------------- | ------------------------------------------------- |
+| `npm run dev`     | Start the development server                      |
+| `npm test`        | Run the test suite                                |
+| `npm run lint`    | Lint the codebase (zero warnings allowed)         |
+| `npm run build`   | Type-check and create a production build in `dist/` |
+| `npm run preview` | Preview the production build locally              |
 
 ## Project structure
 
 ```text
 src/
-  components/  WhiteboardEditor, AppHeader, BoardSwitcher, PresentationControls
-  hooks/       useBoards, useAutosave, usePresentationMode
-  lib/         db (IndexedDB wrapper), boardRepository, export (scene-file helpers)
-  types/       board (Board / StoredBoard / serialization)
+  components/  WhiteboardEditor, AppHeader, BoardSwitcher, FullscreenControls
+  hooks/       useBoards, useAutosave, useFullscreen
+  lib/         IndexedDB wrapper, board repository, export helpers
+  types/       Board types and serialization
 ```
 
-Persistence is split behind a small repository seam (`BoardRepository` over a `KeyValueStore` in `src/lib/db.ts`): a Firebase/cloud repository could be added later without touching the editor.
+Storage sits behind a small `BoardRepository` interface, so the editor doesn't depend on how boards are persisted.
 
-## Limitations
+## Design
 
-- Data lives in the browser's IndexedDB only — no account, no sync, no cross-device access. Clearing site data deletes boards.
-- Only the canvas background color is kept from Excalidraw app state; scroll/zoom/selection are per-session view state.
-- Large numbers of embedded images increase IndexedDB usage and export size; browsers may evict site data under storage pressure.
-- The save indicator reflects local persistence, not cloud sync.
+The interface follows the [personal brand theme](https://imranpollob.github.io/personal-brand-theme/): a teal accent, Outfit headings, Plus Jakarta Sans body text, and the iP logo mark. Theme tokens are bundled into `src/index.css`, so the app works fully offline. Web fonts and the shared tools launcher in the header load from the network as optional enhancements and fail silently when unavailable.
 
-## Roadmap (not implemented)
+## Deployment
 
-### v1.1 — Presentation improvements
+The site deploys to GitHub Pages through GitHub Actions.
 
-- Laser pointer, spotlight tool, keyboard navigation between boards, better presentation controls.
+1. In your repository, open **Settings → Pages** and set the source to **GitHub Actions**.
+2. Push to `main`, or run the workflow manually. The [deploy workflow](.github/workflows/deploy.yml) installs dependencies, runs the tests, builds, and publishes `dist/`.
 
-### v1.2 — Firebase integration
+The app is served from the `/whiteboard/` subpath, configured as `base` in `vite.config.ts`. If you fork it under a different repository name or username, update that value along with the URLs in `index.html`, `public/robots.txt`, and `public/sitemap.xml`.
 
-- Optional Google auth, cloud backup, cross-device sync, Firestore board metadata, Firebase Storage for assets, secure rules, local/cloud conflict handling.
+## Good to know
 
-### v1.3 — Content tools
+- Boards are stored in your browser only. There is no sync across devices, and clearing site data removes them. Export important boards as `.excalidraw.json` files for backup.
+- Only the canvas background is persisted from the editor's app state. Zoom, scroll position, and selection reset between sessions.
+- Boards with many large images use more storage and produce larger exports, and browsers may reclaim site data when storage runs low.
 
-- Image annotations, PDF import and annotation, reusable diagrams/templates, improved exporting.
+## Acknowledgements
 
-### v2.0 — Advanced features
-
-- LaTeX equations, code snippets, flowchart templates, more teaching/presentation tools.
-
-### Optional long-term
-
-- Shareable boards, real-time collaboration, AI-assisted diagram generation.
+Whiteboard is powered by the excellent [Excalidraw](https://github.com/excalidraw/excalidraw) editor component.
