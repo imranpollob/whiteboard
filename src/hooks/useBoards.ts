@@ -89,15 +89,12 @@ export function useBoards(options: UseBoardsOptions = {}): UseBoardsResult {
   const deleteBoard = useCallback(
     async (id: string) => {
       await repository.deleteBoard(id);
-      setBoards((prev) => {
-        const next = prev.filter((b) => b.id !== id);
-        setActiveBoardId((current) =>
-          current === id ? (next[0]?.id ?? null) : current,
-        );
-        return next;
-      });
+      setBoards((prev) => prev.filter((b) => b.id !== id));
+      setActiveBoardId((current) =>
+        current === id ? (boards.find((b) => b.id !== id)?.id ?? null) : current,
+      );
     },
-    [repository],
+    [repository, boards],
   );
 
   const switchBoard = useCallback((id: string) => {

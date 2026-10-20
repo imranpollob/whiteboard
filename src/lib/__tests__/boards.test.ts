@@ -61,6 +61,44 @@ describe("BoardRepository", () => {
     expect(await repo.getBoard("missing")).toBeNull();
   });
 
+  it("keeps a deleted board removed when autosaves arrive before and after deletion", async () => {
+    const { repo, store } = makeRepo();
+    const board = await repo.createBoard("Gone");
+    const survivor = await repo.createBoard("Keep");
+    const originalPut = store.put.bind(store);
+    let finishSave!: () => void;
+    let saveStarted!: () => void;
+    const started = new Promise<void>((resolve) => { saveStarted = resolve; });
+    const release = new Promise<void>((resolve) => { finishSave = resolve; });
+    vi.spyOn(store, "put").mockImplementationOnce(async (id, value) => {
+      saveStarted();
+      await release;
+      await originalPut(id, value);
+    });
+
+    const saving = repo.saveBoard(board);
+    await started;
+    const deleting = repo.deleteBoard(board.id);
+    const lateSave = repo.saveBoard(board);
+    finishSave();
+    await Promise.all([saving, deleting, lateSave]);
+    await repo.saveBoard(board);
+
+    expect((await repo.listBoards()).map((b) => b.id)).toEqual([survivor.id]);
+    expect(await repo.getBoard(board.id)).toBeNull();
+  });
+
+  it("preserves the board and allows saving and retrying after deletion fails", async () => {
+    const { repo, store } = makeRepo();
+    const board = await repo.createBoard("Keep");
+    vi.spyOn(store, "remove").mockRejectedValueOnce(new Error("Storage unavailable"));
+    await expect(repo.deleteBoard(board.id)).rejects.toThrow("Storage unavailable");
+    await repo.saveBoard({ ...board, title: "Still here" });
+    expect((await repo.getBoard(board.id))?.title).toBe("Still here");
+    await repo.deleteBoard(board.id);
+    expect(await repo.getBoard(board.id)).toBeNull();
+  });
+
   it("saves and restores elements, files, and background", async () => {
     const { repo } = makeRepo();
     const board = await repo.createBoard("Scene");

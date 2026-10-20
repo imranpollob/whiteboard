@@ -150,8 +150,7 @@ body {
 .app-logo {
   width: 30px;
   height: 30px;
-  border-radius: var(--wb-radius);
-  border: 1px solid var(--wb-border);
+  object-fit: contain;
   flex-shrink: 0;
 }
 
@@ -378,10 +377,105 @@ body {
   padding: 0.25rem 0.4rem;
 }
 
-.board-switcher-confirm {
-  font-size: 0.78rem;
+.board-switcher-actions button.board-switcher-delete:hover {
   color: var(--wb-danger);
-  margin: 0.3rem 0.4rem;
+}
+
+.board-delete-dialog {
+  width: min(26rem, calc(100vw - 2rem));
+  margin: auto;
+  padding: 1.5rem;
+  color: var(--wb-fg);
+  background: var(--wb-btn-bg);
+  border: 1px solid var(--wb-border);
+  border-radius: 16px;
+  box-shadow: 0 24px 64px rgb(0 0 0 / 0.24);
+}
+
+.board-delete-dialog::backdrop {
+  background: rgb(15 23 42 / 0.45);
+}
+
+.board-delete-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.75rem;
+  height: 2.75rem;
+  margin-bottom: 1rem;
+  border-radius: 50%;
+  color: var(--wb-danger);
+  background: color-mix(in srgb, var(--wb-danger) 10%, transparent);
+}
+
+.board-delete-dialog h2 {
+  margin: 0 0 0.5rem;
+  font-family: var(--wb-font-heading);
+  font-size: 1.25rem;
+  font-weight: 600;
+}
+
+.board-delete-dialog p {
+  margin: 0;
+  color: var(--wb-muted);
+  font-size: 0.875rem;
+  line-height: 1.65;
+  overflow-wrap: anywhere;
+}
+
+.board-delete-dialog strong {
+  color: var(--wb-fg);
+  font-weight: 600;
+}
+
+.board-delete-dialog .board-delete-error {
+  margin-top: 1rem;
+  color: var(--wb-danger);
+}
+
+.board-delete-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.625rem;
+  margin-top: 1.5rem;
+}
+
+.board-delete-actions button {
+  min-height: 2.5rem;
+  padding: 0.5rem 1rem;
+  border: 1px solid var(--wb-border);
+  border-radius: var(--wb-radius);
+  background: var(--wb-btn-bg);
+  color: var(--wb-fg);
+  font: inherit;
+  font-size: 0.875rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.board-delete-actions button:hover:not(:disabled) {
+  background: var(--wb-btn-hover);
+}
+
+.board-delete-actions button.board-delete-confirm {
+  background: #dc2626;
+  border-color: #dc2626;
+  color: #fff;
+}
+
+.board-delete-actions button.board-delete-confirm:hover:not(:disabled) {
+  background: #b91c1c;
+  border-color: #b91c1c;
+}
+
+.board-delete-actions button:focus-visible {
+  outline: 2px solid var(--wb-primary);
+  outline-offset: 3px;
+}
+
+.board-delete-actions button:disabled {
+  opacity: 0.6;
+  cursor: wait;
 }
 
 .board-switcher-new {

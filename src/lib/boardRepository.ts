@@ -50,6 +50,20 @@ export class BoardRepository implements IBoardRepository {
   private store: KeyValueStore;
   private onCorruptedRecord: (info: CorruptedRecordInfo) => void;
   private now: () => number;
+  private writes = new Map<string, Promise<unknown>>();
+  private deletedIds = new Set<string>();
+
+  /** Keep saves and deletion ordered so delayed autosaves cannot restore a board. */
+  private async write<T>(id: string, operation: () => Promise<T>): Promise<T> {
+    const previous = this.writes.get(id) ?? Promise.resolve();
+    const next = previous.catch(() => undefined).then(operation);
+    this.writes.set(id, next);
+    try {
+      return await next;
+    } finally {
+      if (this.writes.get(id) === next) this.writes.delete(id);
+    }
+  }
 
   constructor(options: BoardRepositoryOptions = {}) {
     this.store = options.store ?? getBoardStore();
@@ -96,9 +110,12 @@ export class BoardRepository implements IBoardRepository {
 
   /** Upsert; bumps `updatedAt` to now. */
   async saveBoard(board: Board): Promise<Board> {
-    const next: Board = { ...board, updatedAt: this.now() };
-    await this.store.put(next.id, { ...toStoredBoard(next), version: BOARD_SCHEMA_VERSION });
-    return next;
+    return this.write(board.id, async () => {
+      if (this.deletedIds.has(board.id)) return board;
+      const next: Board = { ...board, updatedAt: this.now() };
+      await this.store.put(next.id, { ...toStoredBoard(next), version: BOARD_SCHEMA_VERSION });
+      return next;
+    });
   }
 
   async renameBoard(id: string, title: string): Promise<Board | null> {
@@ -114,7 +131,10 @@ export class BoardRepository implements IBoardRepository {
   }
 
   async deleteBoard(id: string): Promise<void> {
-    await this.store.remove(id);
+    await this.write(id, async () => {
+      await this.store.remove(id);
+      this.deletedIds.add(id);
+    });
   }
 
   private ensureDefaultInFlight: Promise<Board> | null = null;

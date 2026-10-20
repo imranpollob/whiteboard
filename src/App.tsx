@@ -131,11 +131,11 @@ export default function App() {
   );
 
   const handleDelete = useCallback(
-    (id: string) => {
-      if (draft?.id === id) setDraft(null);
-      void deleteBoard(id);
+    async (id: string) => {
+      await deleteBoard(id);
+      setDraft((prev) => prev?.id === id ? null : prev);
     },
-    [deleteBoard, draft?.id],
+    [deleteBoard],
   );
 
   const handleChangeBackground = useCallback((color: string) => {

@@ -60,7 +60,7 @@ Storage sits behind a small `BoardRepository` interface, so the editor doesn't d
 
 ## Design
 
-The interface follows the [personal brand theme](https://imranpollob.github.io/personal-brand-theme/): a teal accent, Outfit headings, Plus Jakarta Sans body text, and the iP logo mark. Theme tokens are bundled into `src/index.css`, so the app works fully offline. Web fonts and the shared tools launcher in the header load from the network as optional enhancements and fail silently when unavailable.
+The interface follows the [personal brand theme](https://imranpollob.github.io/personal-brand-theme/): a teal accent, Outfit headings, Plus Jakarta Sans body text, and a custom whiteboard and pencil logo. Theme tokens are bundled into `src/index.css`, so the app works fully offline. Web fonts and the shared tools launcher in the header load from the network as optional enhancements and fail silently when unavailable.
 
 ## Deployment
 

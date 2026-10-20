@@ -1,5 +1,5 @@
-import { useEffect, useRef, useState } from "react";
-import { Check, ChevronDown, Pencil, Plus, Trash2, X } from "lucide-react";
+import { useEffect, useId, useRef, useState } from "react";
+import { ChevronDown, Pencil, Plus, Trash2 } from "lucide-react";
 
 export interface BoardSummary {
   id: string;
@@ -13,7 +13,7 @@ interface BoardSwitcherProps {
   onSelect: (id: string) => void;
   onCreate: () => void;
   onRename: (id: string, title: string) => void;
-  onDelete: (id: string) => void;
+  onDelete: (id: string) => Promise<void>;
 }
 
 /**
@@ -32,7 +32,45 @@ export default function BoardSwitcher({
   const [renamingId, setRenamingId] = useState<string | null>(null);
   const [draft, setDraft] = useState("");
   const [confirmDeleteId, setConfirmDeleteId] = useState<string | null>(null);
+  const [deleting, setDeleting] = useState(false);
+  const [deleteError, setDeleteError] = useState<string | null>(null);
   const rootRef = useRef<HTMLDivElement>(null);
+  const toggleRef = useRef<HTMLButtonElement>(null);
+  const dialogRef = useRef<HTMLDialogElement>(null);
+  const cancelRef = useRef<HTMLButtonElement>(null);
+  const dialogTitleId = useId();
+  const dialogDescriptionId = useId();
+  const deleteTarget = boards.find((b) => b.id === confirmDeleteId);
+
+  useEffect(() => {
+    if (confirmDeleteId) {
+      dialogRef.current?.showModal();
+      cancelRef.current?.focus();
+    } else if (dialogRef.current?.open) {
+      dialogRef.current.close();
+      toggleRef.current?.focus();
+    }
+  }, [confirmDeleteId]);
+
+  const closeDelete = () => {
+    if (deleting) return;
+    setConfirmDeleteId(null);
+    setDeleteError(null);
+  };
+
+  const confirmDelete = async () => {
+    if (!deleteTarget || deleting) return;
+    setDeleting(true);
+    setDeleteError(null);
+    try {
+      await onDelete(deleteTarget.id);
+      setConfirmDeleteId(null);
+    } catch {
+      setDeleteError("Couldn’t delete this board. Please try again.");
+    } finally {
+      setDeleting(false);
+    }
+  };
 
   useEffect(() => {
     if (!open) return;
@@ -56,7 +94,7 @@ export default function BoardSwitcher({
       window.removeEventListener("pointerdown", onDown);
       window.removeEventListener("keydown", onKey);
     };
-  }, [open ]);
+  }, [open]);
 
   const active = boards.find((b) => b.id === activeId) ?? null;
   const activeIndex = active ? boards.findIndex((b) => b.id === active.id) : -1;
@@ -72,7 +110,8 @@ export default function BoardSwitcher({
       <button
         type="button"
         className="board-switcher-toggle"
-        aria-haspopup="listbox"
+        ref={toggleRef}
+        aria-haspopup="true"
         aria-expanded={open}
         onClick={() => setOpen((v) => !v)}
         title="Switch board"
@@ -85,13 +124,11 @@ export default function BoardSwitcher({
       </button>
 
       {open && (
-        <div className="board-switcher-menu" role="listbox" aria-label="Boards">
+        <div className="board-switcher-menu" role="group" aria-label="Boards">
           {boards.map((b) => (
             <div
               key={b.id}
               className={`board-switcher-item${b.id === activeId ? " is-active" : ""}`}
-              role="option"
-              aria-selected={b.id === activeId}
             >
               {renamingId === b.id ? (
                 <input
@@ -110,6 +147,7 @@ export default function BoardSwitcher({
                 <button
                   type="button"
                   className="board-switcher-select"
+                  aria-current={b.id === activeId ? "true" : undefined}
                   onClick={() => {
                     onSelect(b.id);
                     setOpen(false);
@@ -131,54 +169,56 @@ export default function BoardSwitcher({
                 >
                   <Pencil size={14} aria-hidden="true" />
                 </button>
-                {confirmDeleteId === b.id ? (
-                  <>
-                    <button
-                      type="button"
-                      className="danger"
-                      title="Confirm delete"
-                      aria-label="Confirm delete"
-                      onClick={() => {
-                        onDelete(b.id);
-                        setConfirmDeleteId(null);
-                        if (boards.length <= 1) setOpen(false);
-                      }}
-                    >
-                      <Check size={14} aria-hidden="true" />
-                    </button>
-                    <button
-                      type="button"
-                      title="Cancel delete"
-                      aria-label="Cancel delete"
-                      onClick={() => setConfirmDeleteId(null)}
-                    >
-                      <X size={14} aria-hidden="true" />
-                    </button>
-                  </>
-                ) : (
-                  <button
-                    type="button"
-                    title={`Delete ${b.title}`}
-                    aria-label={`Delete ${b.title}`}
-                    onClick={() => setConfirmDeleteId(b.id)}
-                  >
-                    <Trash2 size={14} aria-hidden="true" />
-                  </button>
-                )}
+                <button
+                  type="button"
+                  className="board-switcher-delete"
+                  title={`Delete ${b.title}`}
+                  aria-label={`Delete ${b.title}`}
+                  onClick={() => {
+                    setRenamingId(null);
+                    setDeleteError(null);
+                    setOpen(false);
+                    setConfirmDeleteId(b.id);
+                  }}
+                >
+                  <Trash2 size={14} aria-hidden="true" />
+                </button>
               </span>
             </div>
           ))}
-          {confirmDeleteId && (
-            <p className="board-switcher-confirm">
-              Delete this board? Confirm to proceed.
-            </p>
-          )}
           <button type="button" className="board-switcher-new" onClick={onCreate}>
             <Plus size={14} aria-hidden="true" />
             New board
           </button>
         </div>
       )}
+      <dialog
+        ref={dialogRef}
+        className="board-delete-dialog"
+        aria-labelledby={dialogTitleId}
+        aria-describedby={dialogDescriptionId}
+        aria-busy={deleting}
+        onCancel={(e) => {
+          e.preventDefault();
+          closeDelete();
+        }}
+      >
+        <div className="board-delete-icon"><Trash2 size={22} aria-hidden="true" /></div>
+        <h2 id={dialogTitleId}>Delete board?</h2>
+        <p id={dialogDescriptionId}>
+          <strong>“{deleteTarget?.title}”</strong> and all its drawings will be
+          permanently deleted. This action cannot be undone.
+        </p>
+        {deleteError && <p className="board-delete-error" role="alert">{deleteError}</p>}
+        <div className="board-delete-actions">
+          <button ref={cancelRef} type="button" disabled={deleting} onClick={closeDelete}>
+            Cancel
+          </button>
+          <button type="button" className="board-delete-confirm" disabled={deleting} onClick={() => void confirmDelete()}>
+            {deleting ? "Deleting…" : "Delete board"}
+          </button>
+        </div>
+      </dialog>
     </div>
   );
 }

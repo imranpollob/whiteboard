@@ -57,7 +57,18 @@ export default function WhiteboardEditor({
   onReadyRef.current = onReady;
 
   // Capture the very first scene for mount-only initialData.
-  const mountSceneRef = useRef(initialScene);
+  const mountSceneRef = useRef<ExcalidrawInitialDataState>({
+    ...initialScene,
+    appState: {
+      ...initialScene?.appState,
+      activeTool: {
+        type: "freedraw",
+        customType: null,
+        lastActiveTool: null,
+        locked: true,
+      },
+    },
+  });
   // Skip the onChange fired by our own imperative updateScene call.
   const applyingRemoteRef = useRef(false);
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
