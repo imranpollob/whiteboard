@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef } from "react";
-import { Excalidraw, MainMenu } from "@excalidraw/excalidraw";
-import { Github } from "lucide-react";
+import { Excalidraw } from "@excalidraw/excalidraw";
+import { Github, Keyboard } from "lucide-react";
 import type {
   BinaryFileData,
   BinaryFiles,
@@ -121,26 +121,32 @@ export default function WhiteboardEditor({
         theme={theme}
         onChange={handleChange}
       >
-        {/* Default menu minus the Excalidraw social links. */}
-        <MainMenu>
-          <MainMenu.DefaultItems.LoadScene />
-          <MainMenu.DefaultItems.SaveToActiveFile />
-          <MainMenu.DefaultItems.Export />
-          <MainMenu.DefaultItems.SaveAsImage />
-          <MainMenu.DefaultItems.SearchMenu />
-          <MainMenu.DefaultItems.Help />
-          <MainMenu.DefaultItems.ClearCanvas />
-          <MainMenu.ItemLink
-            href="https://github.com/imranpollob/whiteboard"
-            icon={<Github size={16} />}
-          >
-            GitHub
-          </MainMenu.ItemLink>
-          <MainMenu.Separator />
-          <MainMenu.DefaultItems.ToggleTheme />
-          <MainMenu.DefaultItems.ChangeCanvasBackground />
-        </MainMenu>
       </Excalidraw>
+      <div className="wb-corner-actions">
+        <a
+          className="wb-corner-btn"
+          href="https://github.com/imranpollob/whiteboard"
+          target="_blank"
+          rel="noopener noreferrer"
+          title="GitHub"
+          aria-label="GitHub repository"
+        >
+          <Github size={18} aria-hidden="true" />
+        </a>
+        <button
+          type="button"
+          className="wb-corner-btn"
+          title="Keyboard shortcuts (?)"
+          aria-label="Keyboard shortcuts"
+          onClick={() =>
+            apiRef.current?.updateScene({
+              appState: { openDialog: { name: "help" } } as never,
+            })
+          }
+        >
+          <Keyboard size={18} aria-hidden="true" />
+        </button>
+      </div>
     </div>
   );
 }

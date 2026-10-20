@@ -1,6 +1,8 @@
 import type { ReactNode } from "react";
-import { FileDown, Maximize, Minimize, Moon, Sun } from "lucide-react";
+import { Download, Maximize, Upload, Minimize, Moon, Palette, Sun } from "lucide-react";
 import type { WhiteboardTheme } from "./WhiteboardEditor";
+
+const BACKGROUND_SWATCHES = ["#ffffff", "#f8f9fa", "#f5faff", "#fffce8", "#fdf8f6"];
 
 export type SaveStatus = "saved" | "saving" | "error" | "unsaved";
 
@@ -12,6 +14,8 @@ interface AppHeaderProps {
   theme: WhiteboardTheme;
   isFullscreen: boolean;
   fileDisabled?: boolean;
+  backgroundColor: string;
+  onChangeBackground: (color: string) => void;
   onExportPng: () => void;
   onExportSvg: () => void;
   onExportJson: () => void;
@@ -34,6 +38,8 @@ export default function AppHeader({
   theme,
   isFullscreen,
   fileDisabled,
+  backgroundColor,
+  onChangeBackground,
   onExportPng,
   onExportSvg,
   onExportJson,
@@ -67,32 +73,76 @@ export default function AppHeader({
           {SAVE_LABEL[saveStatus]}
         </span>
 
+        <button
+          type="button"
+          className="header-btn"
+          disabled={fileDisabled}
+          onClick={onImport}
+          title="Import a board from a JSON file"
+          aria-label="Import"
+        >
+          <Upload size={15} aria-hidden="true" />
+        </button>
+
         <div className="export-menu">
           <button
             type="button"
             className="header-btn"
             disabled={fileDisabled}
             aria-haspopup="menu"
-            title="File: export or import board"
+            title="Export board"
+            aria-label="Export"
           >
-            <FileDown size={15} aria-hidden="true" />
-            File
+            <Download size={15} aria-hidden="true" />
           </button>
-          {/* Progressive enhancement: hover/focus reveals menu via CSS;
-              buttons remain directly reachable for keyboard users. */}
-          <div className="export-menu-list file-menu-list" role="menu" aria-label="File">
+          {/* Hover/focus reveals the menu via CSS; items stay keyboard reachable. */}
+          <div className="export-menu-list file-menu-list" role="menu" aria-label="Export">
             <button type="button" role="menuitem" disabled={fileDisabled} onClick={onExportPng}>
-              Export PNG image
+              PNG image
             </button>
             <button type="button" role="menuitem" disabled={fileDisabled} onClick={onExportSvg}>
-              Export SVG image
+              SVG image
             </button>
             <button type="button" role="menuitem" disabled={fileDisabled} onClick={onExportJson}>
-              Export JSON
+              JSON
             </button>
-            <button type="button" role="menuitem" disabled={fileDisabled} onClick={onImport}>
-              Import JSON
-            </button>
+          </div>
+        </div>
+
+        <div className="export-menu">
+          <button
+            type="button"
+            className="header-btn"
+            disabled={fileDisabled}
+            aria-haspopup="menu"
+            aria-label="Canvas background"
+            title="Canvas background"
+          >
+            <Palette size={15} aria-hidden="true" />
+          </button>
+          <div className="export-menu-list bg-menu-list" role="menu" aria-label="Canvas background">
+            <div className="bg-swatches">
+              {BACKGROUND_SWATCHES.map((color) => (
+                <button
+                  key={color}
+                  type="button"
+                  role="menuitem"
+                  className="bg-swatch"
+                  style={{ background: color }}
+                  aria-label={`Background ${color}`}
+                  aria-pressed={backgroundColor.toLowerCase() === color}
+                  onClick={() => onChangeBackground(color)}
+                />
+              ))}
+            </div>
+            <label className="bg-custom">
+              Custom
+              <input
+                type="color"
+                value={/^#[0-9a-f]{6}$/i.test(backgroundColor) ? backgroundColor : "#ffffff"}
+                onChange={(e) => onChangeBackground(e.target.value)}
+              />
+            </label>
           </div>
         </div>
 
@@ -102,13 +152,13 @@ export default function AppHeader({
           onClick={onToggleFullscreen}
           title={isFullscreen ? "Exit fullscreen (Esc)" : "Enter fullscreen"}
           aria-pressed={isFullscreen}
+          aria-label={isFullscreen ? "Exit fullscreen" : "Fullscreen"}
         >
           {isFullscreen ? (
             <Minimize size={15} aria-hidden="true" />
           ) : (
             <Maximize size={15} aria-hidden="true" />
           )}
-          {isFullscreen ? "Exit fullscreen" : "Fullscreen"}
         </button>
 
         <button

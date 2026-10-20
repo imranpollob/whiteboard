@@ -505,3 +505,95 @@ body.fullscreen-controls-idle .fullscreen-controls {
 .wb-editor .layer-ui__library {
   display: none !important;
 }
+
+/* ---- Canvas background menu ---- */
+
+.bg-menu-list {
+  min-width: 0;
+  padding: 0.5rem;
+}
+
+.bg-swatches {
+  display: flex;
+  gap: 0.35rem;
+}
+
+.export-menu-list .bg-swatch {
+  width: 1.5rem;
+  height: 1.5rem;
+  padding: 0;
+  border: 1px solid var(--wb-border);
+  border-radius: 6px;
+}
+
+.export-menu-list .bg-swatch[aria-pressed="true"] {
+  outline: 2px solid var(--wb-primary);
+  outline-offset: 1px;
+}
+
+.bg-custom {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 0.5rem;
+  font-size: 0.8rem;
+  color: var(--wb-muted);
+}
+
+/* ---- Excalidraw chrome: hamburger menu removed, help moved to corner ---- */
+
+.wb-editor {
+  position: relative;
+}
+
+.wb-editor .main-menu-trigger,
+.wb-editor .help-icon {
+  display: none !important;
+}
+
+.wb-corner-actions {
+  position: absolute;
+  right: 1rem;
+  bottom: 1rem;
+  display: flex;
+  gap: 0.5rem;
+  z-index: 5;
+}
+
+.wb-corner-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  background: var(--wb-btn-bg);
+  color: var(--wb-fg);
+  border: 1px solid var(--wb-border);
+  border-radius: var(--wb-radius);
+  cursor: pointer;
+  padding: 0;
+}
+
+.wb-corner-btn:hover {
+  background: var(--wb-btn-hover);
+  border-color: var(--wb-primary);
+}
+
+/* Excalidraw stores the light-mode colour and darkens it with a CSS filter
+ * in the dark theme. Apply the same filter to the swatches so they preview
+ * what the canvas will actually show. */
+:root[data-theme="dark"] .export-menu-list .bg-swatch,
+:root[data-theme="dark"] .bg-custom input[type="color"] {
+  filter: invert(93%) hue-rotate(180deg);
+}
+
+/* Bridge the 4px gap between the trigger and its popup so the hover state
+ * isn't lost while the cursor travels across it. */
+.export-menu-list::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: -8px;
+  height: 8px;
+}

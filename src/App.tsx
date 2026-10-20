@@ -138,6 +138,11 @@ export default function App() {
     [deleteBoard, draft?.id],
   );
 
+  const handleChangeBackground = useCallback((color: string) => {
+    // onChange fires from updateScene and persists it via handleSceneChange.
+    apiRef.current?.updateScene({ appState: { viewBackgroundColor: color } as never });
+  }, []);
+
   const slug = useMemo(() => slugify(activeBoard?.title ?? "board"), [activeBoard?.title]);
 
   const handleExportPng = useCallback(async () => {
@@ -268,6 +273,8 @@ export default function App() {
         theme={theme}
         isFullscreen={isFullscreen}
         fileDisabled={!activeBoard}
+        backgroundColor={draft?.viewBackgroundColor ?? "#ffffff"}
+        onChangeBackground={handleChangeBackground}
         onExportPng={() => void handleExportPng()}
         onExportSvg={() => void handleExportSvg()}
         onExportJson={() => void handleExportJson()}
