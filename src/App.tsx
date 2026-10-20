@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { CaptureUpdateAction } from "@excalidraw/excalidraw";
 import type { ExcalidrawImperativeAPI } from "@excalidraw/excalidraw/types";
 import WhiteboardEditor, { type WhiteboardScene, type WhiteboardTheme } from "./components/WhiteboardEditor";
 import AppHeader, { type SaveStatus } from "./components/AppHeader";
@@ -138,6 +139,21 @@ export default function App() {
     [deleteBoard],
   );
 
+  const handleClearBoard = useCallback(() => {
+    const api = apiRef.current;
+    if (!api || !activeId) return;
+    api.updateScene({
+      elements: [],
+      appState: { selectedElementIds: {}, selectedGroupIds: {} },
+      captureUpdate: CaptureUpdateAction.IMMEDIATELY,
+    });
+    handleSceneChange({
+      elements: [],
+      appState: api.getAppState(),
+      files: api.getFiles(),
+    });
+  }, [activeId, handleSceneChange]);
+
   const handleChangeBackground = useCallback((color: string) => {
     // onChange fires from updateScene and persists it via handleSceneChange.
     apiRef.current?.updateScene({ appState: { viewBackgroundColor: color } as never });
@@ -273,6 +289,8 @@ export default function App() {
         theme={theme}
         isFullscreen={isFullscreen}
         fileDisabled={!activeBoard}
+        boardTitle={activeBoard?.title ?? "Untitled board"}
+        onClearBoard={handleClearBoard}
         backgroundColor={draft?.viewBackgroundColor ?? "#ffffff"}
         onChangeBackground={handleChangeBackground}
         onExportPng={() => void handleExportPng()}

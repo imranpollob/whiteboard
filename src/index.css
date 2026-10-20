@@ -123,6 +123,7 @@ body {
   display: flex;
   align-items: center;
   justify-content: space-between;
+  flex-wrap: wrap;
   gap: 0.75rem;
   padding: 0.5rem 0.75rem;
   background: var(--wb-header-bg);
@@ -136,6 +137,14 @@ body {
   align-items: center;
   gap: 0.5rem;
   min-width: 0;
+}
+
+.app-header-right {
+  flex-wrap: wrap;
+}
+
+.header-btn svg {
+  flex-shrink: 0;
 }
 
 .app-title {
